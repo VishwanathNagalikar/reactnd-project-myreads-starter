@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import ProtoTypes from 'prop-types';
+import PropTypes from 'prop-types';
 class CurrentlyReading extends Component {
-	static protoTypes = {
-		books: ProtoTypes.array.isRequired,
-		onChangeShelf: ProtoTypes.func.isRequired
+	static propTypes = {
+		books: PropTypes.array.isRequired,
+		onChangeShelf: PropTypes.func.isRequired
 	};
 	render() {
 		// const { books } = this.props.books;
@@ -14,6 +14,7 @@ class CurrentlyReading extends Component {
 				<h2 className="bookshelf-title">Currently Reading</h2>
 				<div className="bookshelf-books">
 					<ol className="books-grid">
+						{/* filter the books from whole collection which have shelf value as currentlyReading and map through each book */}
 						{books.filter((book) => book.shelf === 'currentlyReading').map((book) => {
 							return (
 								<li key={book.id}>
@@ -25,11 +26,15 @@ class CurrentlyReading extends Component {
 												style={{
 													width: 128,
 													height: 193,
+													// replace the long url by checking the property of the book object
 													backgroundImage: `url(${book.imageLinks.thumbnail})`
 												}}
 											/>
 											<div className="book-shelf-changer">
 												<select
+													// here actual handeling of the shelf is in app.js not in the BookShelf.js
+													// this is common for other components which are similar to this one
+													// the props are travelled from app.js to BookShelf.js to this file where actual call takes place
 													onChange={(e) => {
 														this.props.onChangeShelf(book, e.target.value);
 														console.log(book, e.target.value);

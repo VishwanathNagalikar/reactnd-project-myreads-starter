@@ -23,6 +23,7 @@ class BooksApp extends React.Component {
 	getBooks = () => {
 		BooksAPI.getAll().then((books) => {
 			this.setState({ books });
+			console.log(books);
 		});
 	};
 
@@ -43,7 +44,7 @@ class BooksApp extends React.Component {
 					path="/"
 					render={() => <BookShelf books={this.state.books} onChange={this.changeShelf} />}
 				/>
-				<Route path="/search" render={({ history }) => <SearchBooks />} />
+				<Route path="/search" render={({ history }) => <SearchBooks onChange={this.changeShelf} />} />
 			</div>
 		);
 	}

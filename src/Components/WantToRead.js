@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import ProtoTypes from 'prop-types';
+import PropTypes from 'prop-types';
+
 class WantToRead extends Component {
-	static protoTypes = {
-		books: ProtoTypes.array.isRequired,
-		onChangeShelf: ProtoTypes.func.isRequired
+	static propTypes = {
+		books: PropTypes.array.isRequired,
+		onChangeShelf: PropTypes.func.isRequired
 	};
 	render() {
 		const books = this.props.books;
