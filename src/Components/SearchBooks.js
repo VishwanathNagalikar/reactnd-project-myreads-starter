@@ -1,7 +1,22 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import escapeRegExp from 'escape-string-regexp';
+import sortBy from 'sort-by';
 
 class SearchBooks extends Component {
+	state = {
+		query: ''
+	};
+
+	updateQuery = (query) => {
+		this.setState({ query: query.trim() });
+	};
+
+	clearQuery = () => {
+		this.setState({ query: '' });
+	};
+
 	render() {
 		return (
 			<div className="search-books">
