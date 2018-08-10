@@ -15,20 +15,20 @@ class SearchBooks extends Component {
 	// then the query is reset and if the previous query was legit then previous list will stay
 	updateQuery = (query) => {
 		this.setState({ query: query });
-		if (query) {
+		if (query === '' || !query) {
+			this.setState({ ShowingBooks: [], query: '' });
+			// const match = new RegExp(escapeRegExp(query), 'i');
+			// ShowingBooks = books.filter((book) => match.test(book.title));
+		} else {
 			BooksAPI.search(query).then((books) => {
-				if (books.length > 0) {
+				if (books.length > 0 && query !== '') {
 					this.setState({ ShowingBooks: books }); // once we get the queried books map through it and render
 				} else {
-					this.setState({ query: '' });
+					this.setState({ ShowingBooks: [] });
 				}
 
 				// console.log(ShowingBooks);
 			});
-			// const match = new RegExp(escapeRegExp(query), 'i');
-			// ShowingBooks = books.filter((book) => match.test(book.title));
-		} else {
-			<div>nothing in search </div>;
 		}
 		// ShowingBooks.sort(sortBy('title'));
 	};
@@ -92,7 +92,7 @@ class SearchBooks extends Component {
 													<option value="currentlyReading">Currently Reading</option>
 													<option value="wantToRead">Want to Read</option>
 													<option value="read">Read</option>
-													<option value="none">None</option>
+													{/* <option value="none">None</option> */}
 												</select>
 											</div>
 										</div>
