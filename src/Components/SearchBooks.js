@@ -5,38 +5,83 @@ import * as BooksAPI from '../utils/BooksAPI';
 
 class SearchBooks extends Component {
 	static propTypes = {
-		onChange: PropTypes.func.isRequired
+		onChangeShelf: PropTypes.func.isRequired,
+		shelfBooks: PropTypes.array.isRequired
 	};
+
 	state = {
 		query: '',
 		ShowingBooks: []
+		// SearchBooks: []
 	};
-	// this function will update query and find the books which match the query if there is an invalid query
-	// then the query is reset and if the previous query was legit then previous list will stay
+
+	// this function will update query and find the books which match the query
 	updateQuery = (query) => {
-		this.setState({ query: query });
 		if (query === '' || !query) {
-			this.setState({ ShowingBooks: [], query: '' });
+			this.setState({
+				ShowingBooks: [],
+				query: ''
+			});
 			// const match = new RegExp(escapeRegExp(query), 'i');
 			// ShowingBooks = books.filter((book) => match.test(book.title));
 		} else {
-			BooksAPI.search(query).then((books) => {
-				if (books.length > 0 && query !== '') {
-					this.setState({ ShowingBooks: books }); // once we get the queried books map through it and render
-				} else {
-					this.setState({ ShowingBooks: [] });
-				}
+			this.setState({ query: query });
+			this.SearchBooks(query);
+		}
+	};
 
-				// console.log(ShowingBooks);
+	SearchBooks = (query) => {
+		BooksAPI.search(query)
+			.then((books) => {
+				if (!books || books.error) {
+					this.setState({ ShowingBooks: [] });
+					// this.error();
+				} else {
+					// this.setState({ ShowingBooks: books });
+					// this.setShelf(ShowingBooks);
+					this.setShelf(books);
+					// console.log(books);
+				}
+			})
+			.catch((error) => {
+				this.setState({
+					ShowingBooks: []
+				});
+			});
+	};
+
+	// setShelf function will set the shelf value to main page value if a book is already
+	// in the shelf or it makes none
+	setShelf = (books) => {
+		// console.log('before', books);
+		let results = this.props.shelfBooks;
+		// console.log('results', results);
+		if (books.length > 0) {
+			for (let i = 0; i < books.length; i++) {
+				books[i].shelf = 'none';
+				// console.log(books[i].id);
+				for (let j = 0; j < results.length; j++) {
+					// console.log(results[i]);
+					if (books[i].id === results[j].id) {
+						// let temp = results[j].id;
+						// console.log(temp);
+						books[i].shelf = results[j].shelf;
+					}
+				}
+			}
+			this.setState({
+				ShowingBooks: books.filter((book) => book.imageLinks) //.map((book) => (book.shelf = 'none'))
 			});
 		}
-		// ShowingBooks.sort(sortBy('title'));
 	};
+
+	error = () => {
+		console.log('nothing');
+	};
+
 	render() {
 		const { query, ShowingBooks } = this.state;
-
-		// let ShowingBooks = [];
-
+		// console.log(ShowingBooks);
 		return (
 			<div className="search-books">
 				<div className="search-books-bar">
@@ -65,6 +110,7 @@ class SearchBooks extends Component {
 					<ol className="books-grid">
 						{ShowingBooks.map((book) => {
 							// console.log(ShowingBooks);
+
 							return (
 								<li key={book.id}>
 									{/* {console.log(book)} */}
@@ -81,7 +127,7 @@ class SearchBooks extends Component {
 											<div className="book-shelf-changer">
 												<select
 													onChange={(e) => {
-														this.props.onChange(book, e.target.value);
+														this.props.onChangeShelf(book, e.target.value);
 														console.log(book, e.target.value);
 													}}
 													value={book.shelf}
@@ -92,7 +138,7 @@ class SearchBooks extends Component {
 													<option value="currentlyReading">Currently Reading</option>
 													<option value="wantToRead">Want to Read</option>
 													<option value="read">Read</option>
-													{/* <option value="none">None</option> */}
+													<option value="none">None</option>
 												</select>
 											</div>
 										</div>
